@@ -1,18 +1,18 @@
 package com.origamisoftware.teach.advanced.apps.stockquote;
 
+import com.origamisoftware.teach.advanced.util.Interval;
 import com.origamisoftware.teach.advanced.model.StockQuery;
 import com.origamisoftware.teach.advanced.model.StockQuote;
 import com.origamisoftware.teach.advanced.services.StockService;
 import com.origamisoftware.teach.advanced.services.StockServiceException;
 import org.junit.Before;
 import org.junit.Test;
-
+import javax.xml.bind.JAXBException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
  * Tests for BasicStockQuoteApplication
  */
 public class BasicStockQuoteApplicationTest {
+
 
     private BasicStockQuoteApplication basicStockQuoteApplication;
     private StockService stockServiceMock;
@@ -42,8 +43,8 @@ public class BasicStockQuoteApplicationTest {
     public void testDisplayResults() throws ParseException, StockServiceException {
         basicStockQuoteApplication = new BasicStockQuoteApplication(stockServiceMock);
         String symbol = "APPL";
-        String from = "2011-10-29";
-        String until = "2011-11-29";
+        String from = "2011-10-29 12:12:12";    //yyyy-MM-dd HH:mm:ss
+        String until = "2014-11-29 12:12:12";
         StockQuery stockQuery = new StockQuery(symbol, from, until);
 
         List<StockQuote> stockQuotes = new ArrayList<>();
@@ -52,7 +53,10 @@ public class BasicStockQuoteApplicationTest {
         StockQuote stockQuoteUntilDate = new StockQuote(new BigDecimal(100), stockQuery.getUntil().getTime(), stockQuery.getSymbol());
         stockQuotes.add(stockQuoteUntilDate);
 
-        when(stockServiceMock.getQuote(any(String.class), any(Calendar.class), any(Calendar.class))).thenReturn(stockQuotes);
+        when(stockServiceMock.getQuote(any(String.class),
+                any(Calendar.class),
+                any(Calendar.class),
+                any(Interval.class))).thenReturn(stockQuotes);
 
         String output = basicStockQuoteApplication.displayStockQuotes(stockQuery);
         assertTrue("make sure symbol appears in output", output.contains(symbol));
@@ -62,16 +66,7 @@ public class BasicStockQuoteApplicationTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testMainNegative() {
+    public void testMainNegative() throws JAXBException {
         BasicStockQuoteApplication.main(null);
-    }
-
-
-    @Test
-    public void testMainArgs(){
-        String sym = "APPL";
-        String from = "2000-01-01";
-        String until = "2000-01-05";
-        BasicStockQuoteApplication.main(new String[] {sym, from, until});
     }
 }

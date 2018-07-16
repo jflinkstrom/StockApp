@@ -13,9 +13,9 @@ import java.util.Calendar;
 @Immutable
 public class StockQuery extends StockData{
 
-    private String symbol;
-    private Calendar from;
-    private Calendar until;
+    private final String symbol;
+    private final Calendar from;
+    private final Calendar until;
 
     /**
      * Create a new instance from string data. This constructor will convert

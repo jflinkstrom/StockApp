@@ -11,7 +11,9 @@ public class ServiceFactoryTest {
 
     @Test
     public void testGetInstance() {
-        StockService stockService = ServiceFactory.getStockServiceInstance();
+        StockService stockService = ServiceFactory.getStockService();
+        UserService userService = ServiceFactory.getUserService();
         assertNotNull(stockService);
+        assertNotNull(userService);
     }
 }
