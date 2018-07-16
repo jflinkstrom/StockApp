@@ -4,7 +4,7 @@ import com.origamisoftware.teach.advanced.model.StockQuery;
 import com.origamisoftware.teach.advanced.model.StockQuote;
 import com.origamisoftware.teach.advanced.services.StockService;
 import com.origamisoftware.teach.advanced.services.StockServiceException;
-import com.origamisoftware.teach.advanced.services.StockServiceFactory;
+import com.origamisoftware.teach.advanced.services.ServiceFactory;
 
 import java.text.ParseException;
 import java.util.List;
@@ -16,18 +16,14 @@ public class BasicStockQuoteApplication {
 
     private StockService stockService;
 
-    // an example of how to use enum - not part of assignment 3 but useful for assignment 4
-
     /**
      * An enumeration that indicates how the program terminates (ends)
      */
     private enum ProgramTerminationStatusEnum {
 
-        // for now, we just have normal or abnormal but could more specific ones as needed.
         NORMAL(0),
         ABNORMAL(-1);
 
-        // when the program exits, this value will be reported to underlying OS
         private int statusCode;
 
         /**
@@ -103,7 +99,6 @@ public class BasicStockQuoteApplication {
         } else {
             throw new IllegalStateException("Unknown ProgramTerminationStatusEnum.");
         }
-        //System.exit(statusCode.getStatusCode()); // can't run "mvn test" with a system.exit() call... haven't figured out a work around
     }
 
     /**
@@ -114,7 +109,6 @@ public class BasicStockQuoteApplication {
      * @param args one or more stock symbols
      */
     public static void main(String[] args) {
-        // be optimistic init to positive values
         ProgramTerminationStatusEnum exitStatus = ProgramTerminationStatusEnum.NORMAL;
         String programTerminationMessage = "Normal program termination.";
         if (args.length != 3) {
@@ -124,7 +118,7 @@ public class BasicStockQuoteApplication {
         try {
 
             StockQuery stockQuery = new StockQuery(args[0], args[1], args[2]);
-            StockService stockService = StockServiceFactory.getInstance();
+            StockService stockService = ServiceFactory.getStockServiceInstance();
             BasicStockQuoteApplication basicStockQuoteApplication =
                     new BasicStockQuoteApplication(stockService);
             basicStockQuoteApplication.displayStockQuotes(stockQuery);
