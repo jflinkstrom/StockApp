@@ -1,6 +1,5 @@
 package com.origamisoftware.teach.advanced.services;
 
-import com.origamisoftware.teach.advanced.model.Interval;
 import com.origamisoftware.teach.advanced.model.StockQuote;
 import org.junit.Test;
 import java.util.Calendar;
