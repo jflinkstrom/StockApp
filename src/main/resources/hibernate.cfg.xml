@@ -17,9 +17,10 @@
         <property name="hibernate.connection.username">monty</property>
         <property name="hibernate.connection.password">some_pass</property>
 
-        <mapping class="com.origamisoftware.teach.advanced.model.DatabaseAccessObjects.Quotes"/>
-        <mapping class="com.origamisoftware.teach.advanced.model.DatabaseAccessObjects.Person"/>
-        <mapping class="com.origamisoftware.teach.advanced.model.DatabaseAccessObjects.PersonQuotes"/>
+        <mapping class="com.origamisoftware.teach.advanced.model.database.QuoteDAO"/>
+        <mapping class="com.origamisoftware.teach.advanced.model.database.PersonDAO"/>
+        <mapping class="com.origamisoftware.teach.advanced.model.database.PersonStocksDAO"/>
+        <mapping class="com.origamisoftware.teach.advanced.model.database.StockSymbolDAO"/>
 
 
     </session-factory>

@@ -1,6 +1,7 @@
 package com.origamisoftware.teach.advanced.services;
 
 import com.origamisoftware.teach.advanced.model.StockQuote;
+import com.origamisoftware.teach.advanced.util.Interval;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * An implementation of the StockService that returns hard coded data.
  */
-public class SimpleStockService implements StockService {
+ class SimpleStockService implements StockService {
 
     /**
      * Return the current price for a share of stock  for the given symbol
@@ -41,7 +42,7 @@ public class SimpleStockService implements StockService {
      * error.
      */
     @Override
-    public List<StockQuote> getQuote(String symbol, Calendar from, Calendar until) {
+    public List<StockQuote> getQuote(String symbol, Calendar from, Calendar until, Interval interval) {
         // a dead simple implementation.
         List<StockQuote> stockQuotes = new ArrayList<>();
         Date aDay = from.getTime();

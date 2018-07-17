@@ -1,5 +1,6 @@
 package com.origamisoftware.teach.advanced.services;
 
+import com.origamisoftware.teach.advanced.util.Interval;
 import com.origamisoftware.teach.advanced.model.StockQuote;
 import org.junit.Test;
 import java.util.Calendar;
@@ -46,7 +47,7 @@ public class SimpleStockServiceTest {
         until.setTime(date);
         until.add(Calendar.DAY_OF_YEAR, 1);
 
-        List<StockQuote> stockQuote = simpleStockService.getQuote(symbol, from, until);
+        List<StockQuote> stockQuote = simpleStockService.getQuote(symbol, from, until, Interval.DAY);
 
         assertNotNull(stockQuote);
     }

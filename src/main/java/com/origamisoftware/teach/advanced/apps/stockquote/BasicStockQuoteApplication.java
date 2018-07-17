@@ -5,7 +5,14 @@ import com.origamisoftware.teach.advanced.model.StockQuote;
 import com.origamisoftware.teach.advanced.services.StockService;
 import com.origamisoftware.teach.advanced.services.StockServiceException;
 import com.origamisoftware.teach.advanced.services.ServiceFactory;
+import com.origamisoftware.teach.advanced.util.Interval;
+import com.origamisoftware.teach.advanced.xml.jaxb.Stocks;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.util.List;
 
@@ -15,15 +22,20 @@ import java.util.List;
 public class BasicStockQuoteApplication {
 
     private StockService stockService;
+    private static String xmlInstance = "";
+
+    // an example of how to use enum - not part of assignment 3 but useful for assignment 4
 
     /**
      * An enumeration that indicates how the program terminates (ends)
      */
     private enum ProgramTerminationStatusEnum {
 
+        // for now, we just have normal or abnormal but could more specific ones as needed.
         NORMAL(0),
         ABNORMAL(-1);
 
+        // when the program exits, this value will be reported to underlying OS
         private int statusCode;
 
         /**
@@ -33,7 +45,7 @@ public class BasicStockQuoteApplication {
          *                        indicates success or normal termination.
          *                        non 0 numbers indicate abnormal termination.
          */
-        ProgramTerminationStatusEnum(int statusCodeValue) {
+        private ProgramTerminationStatusEnum(int statusCodeValue) {
             this.statusCode = statusCodeValue;
         }
 
@@ -69,9 +81,12 @@ public class BasicStockQuoteApplication {
         StringBuilder stringBuilder = new StringBuilder();
 
         List<StockQuote> stockQuotes =
-                stockService.getQuote(stockQuery.getSymbol(), stockQuery.getFrom(), stockQuery.getUntil());
+                stockService.getQuote(stockQuery.getSymbol(),
+                        stockQuery.getFrom(),
+                        stockQuery.getUntil(),
+                        Interval.DAY); // get one quote for each day in the from until date range.
 
-        stringBuilder.append("Stock quotes for: " + stockQuery.getSymbol() + stockQuery.getFrom() + stockQuery.getUntil() + "\n");
+        stringBuilder.append("Stock quotes for: " + stockQuery.getSymbol() + "\n");
         for (StockQuote stockQuote : stockQuotes) {
             stringBuilder.append(stockQuote.toString());
         }
@@ -99,26 +114,28 @@ public class BasicStockQuoteApplication {
         } else {
             throw new IllegalStateException("Unknown ProgramTerminationStatusEnum.");
         }
+       // System.exit(statusCode.getStatusCode());
     }
 
     /**
      * Run the StockTicker application.
      * <p/>
-     * When invoking the program supply one ore more stock symbols.
      *
      * @param args one or more stock symbols
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JAXBException {
+
+        // be optimistic init to positive values
         ProgramTerminationStatusEnum exitStatus = ProgramTerminationStatusEnum.NORMAL;
         String programTerminationMessage = "Normal program termination.";
         if (args.length != 3) {
             exit(ProgramTerminationStatusEnum.ABNORMAL,
-                    "Please supply 3 arguments a stock symbol, a start date (YYYY-MM-DD) and end date (YYYY-MM-DD)");
+                    "Please supply 3 arguments a stock symbol, a start date (MM/DD/YYYY) and end date (MM/DD/YYYY)");
         }
         try {
 
             StockQuery stockQuery = new StockQuery(args[0], args[1], args[2]);
-            StockService stockService = ServiceFactory.getStockServiceInstance();
+            StockService stockService = ServiceFactory.getStockService();
             BasicStockQuoteApplication basicStockQuoteApplication =
                     new BasicStockQuoteApplication(stockService);
             basicStockQuoteApplication.displayStockQuotes(stockQuery);
@@ -129,9 +146,9 @@ public class BasicStockQuoteApplication {
         } catch (StockServiceException e) {
             exitStatus = ProgramTerminationStatusEnum.ABNORMAL;
             programTerminationMessage = "StockService failed: " + e.getMessage();
+        }  catch (Throwable t) {
+            exitStatus = ProgramTerminationStatusEnum.ABNORMAL;
+            programTerminationMessage = "General application error: " + t.getMessage();
         }
-
-        exit(exitStatus, programTerminationMessage);
-        System.out.println("Oops could not parse a date");
     }
 }
